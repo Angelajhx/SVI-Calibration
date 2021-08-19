@@ -8,7 +8,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 
 
-
+#SVI raw model
 def svi_raw(par, k):
     a, b, rho, m, tau = par
     y = a + b * (rho * (k - m) + np.sqrt((k - m) ** 2 + tau ** 2))
@@ -16,7 +16,7 @@ def svi_raw(par, k):
         return y
     else:
         return 0
-
+#SVI first derivative to k
 def sviCurveDerivate(par, k):
     a, b, rho, m, tau = par
     return b * (rho + (k - m) / np.sqrt((k - m) ** 2 + tau ** 2))
@@ -25,6 +25,7 @@ def sviCurve2ndDerivate(par, k):
     a, b, rho, m, tau = par
     return b * tau * tau / np.power((k - m) ** 2 + tau ** 2, 1.5)
 
+#Check if butterfly arb, create penalty exp(10) 
 def butterflyArbitrage(par,moneyness):
     a, b, rho, m, tau = par
     g = []
@@ -32,7 +33,7 @@ def butterflyArbitrage(par,moneyness):
         gi = gfun(par,k)
         g.append(gi)  
     return np.exp([0 if gi>=0 else 10 for gi in g])
-
+# gfun to calculate whether there is butterfly arb
 def gfun(par, k):
     a, b, rho, m, tau = par
     w = svi_raw(par, k)
@@ -55,7 +56,8 @@ def get_dens(par, moneyness):
 def d2(par, k):
     v = np.sqrt(svi_raw(par, k))
     return -k/v - 0.5*v
-
+    
+#Calculate risk neutral density
 def density(par, k):
     g = gfun(par, k)
     w = svi_raw(par, k)
@@ -71,11 +73,12 @@ def gSVI_raw(par, moneyness):
         SVI.append(svi)  
     return SVI
 
-#within bid ask penalty
+#within bid ask penalty, ext is the penalty para
 def envelopeCondition(pAdjusted, bid, ask, ext):
     return np.exp(np.clip([0 if (pi>=bi and pi<=ai) else ext*2*np.fabs(pi-(ai+bi)/2)/(ai-bi) 
                            for pi, bi, ai in zip(pAdjusted, bid, ask)],a_min=None,a_max=10))
 
+#weight here is to assign higher weight to around ATM and not focus much on wing calibration
 
 def globalOptimization(X, volMarket,weight,bid,ask,moneyness):
     vol_SVI = gSVI_raw(X, moneyness) 
