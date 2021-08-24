@@ -6,3 +6,5 @@ used Gatherl 5 paramter to fit in the curve, and still facing below constriants:
 - Find best algo (minimization method) to fit parameters
 - Better way to taclke (calendar arb, butterfly arb) to incorporate into optimization method
 
+
+
