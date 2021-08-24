@@ -7,4 +7,6 @@ used Gatherl 5 paramter to fit in the curve, and still facing below constriants:
 - Better way to taclke (calendar arb, butterfly arb) to incorporate into optimization method
 
 
+Please refer to the attached research paper I have referred to.
+
 
